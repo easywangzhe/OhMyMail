@@ -1,0 +1,82 @@
+{
+  "@@locale": "zh",
+  "appTitle": "OhMyMail",
+  "syncNow": "立即同步",
+  "addAccount": "添加账号",
+  "settings": "设置",
+  "all": "全部",
+  "github": "GitHub",
+  "searchMail": "搜索邮件",
+  "accounts": "账号",
+  "allMailboxes": "所有邮箱",
+  "noAccounts": "还没有账号",
+  "addGmailOrImap": "添加 Gmail 或 IMAP 后开始同步。",
+  "ready": "就绪",
+  "unreadCount": "{count} 封未读",
+  "@unreadCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "accountMessageCount": "{count} 封",
+  "@accountMessageCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "selectMessage": "选择一封邮件阅读。",
+  "message": "邮件",
+  "attachment": "附件",
+  "from": "发件人：{value}",
+  "@from": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "to": "收件人：{value}",
+  "@to": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "date": "日期：{value}",
+  "@date": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "noMessagesYet": "暂无邮件",
+  "addAccountOrSync": "添加账号或同步收件箱。",
+  "addMailbox": "添加邮箱",
+  "imap": "IMAP",
+  "gmail": "Gmail",
+  "emailAddress": "邮箱地址",
+  "displayName": "显示名称",
+  "username": "用户名",
+  "usernameHint": "留空则使用邮箱地址",
+  "imapHost": "IMAP 服务器",
+  "imapHostHint": "imap.example.com",
+  "port": "端口",
+  "security": "安全",
+  "sslTls": "SSL/TLS",
+  "startTls": "STARTTLS",
+  "plain": "明文",
+  "authorizationCodeOrAppPassword": "授权码或应用专用密码",
+  "gmailImapAppPasswordHint": "Gmail 使用 IMAP 时不能填写谷歌账号登录密码。请在 Google 账号开启两步验证后生成“应用专用密码”，或使用 Gmail OAuth 登录。",
+  "gmailImapAuthFailed": "Gmail IMAP 登录失败。请确认已开启 IMAP，并使用 Google 账号的应用专用密码，而不是网页登录密码。",
+  "required": "必填",
+  "enterValidPort": "请输入有效端口",
+  "launchAtStartup": "桌面端开机自动监听",
+  "desktopListenerEnabledDescription": "桌面应用运行时会持续检查新邮件。",
+  "desktopListenerUnavailableDescription": "仅 Windows 和 macOS 桌面版本可用。",
+  "mobileReminders": "移动端提醒",
+  "mobileReminderDescription": "移动端在应用打开或前台运行时同步并提醒。",
+  "language": "语言",
+  "languageSystem": "中文",
+  "languageChinese": "中文",
+  "languageEnglish": "English",
+  "syncingInboxes": "正在同步收件箱...",
+  "checkingNewMail": "每隔几分钟检查新邮件",
+  "unknownSender": "未知发件人",
+  "noSubject": "无主题"
+}

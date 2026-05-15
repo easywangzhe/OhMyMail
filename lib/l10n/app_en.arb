@@ -1,0 +1,82 @@
+{
+  "@@locale": "en",
+  "appTitle": "OhMyMail",
+  "syncNow": "Sync now",
+  "addAccount": "Add account",
+  "settings": "Settings",
+  "all": "All",
+  "github": "GitHub",
+  "searchMail": "Search mail",
+  "accounts": "Accounts",
+  "allMailboxes": "All mailboxes",
+  "noAccounts": "No accounts",
+  "addGmailOrImap": "Add Gmail or IMAP to start syncing.",
+  "ready": "Ready",
+  "unreadCount": "{count} unread",
+  "@unreadCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "accountMessageCount": "{count} messages",
+  "@accountMessageCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "selectMessage": "Select a message to read.",
+  "message": "Message",
+  "attachment": "Attachment",
+  "from": "From: {value}",
+  "@from": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "to": "To: {value}",
+  "@to": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "date": "Date: {value}",
+  "@date": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "noMessagesYet": "No messages yet",
+  "addAccountOrSync": "Add an account or sync your inboxes.",
+  "addMailbox": "Add mailbox",
+  "imap": "IMAP",
+  "gmail": "Gmail",
+  "emailAddress": "Email address",
+  "displayName": "Display name",
+  "username": "Username",
+  "usernameHint": "Leave blank to use email",
+  "imapHost": "IMAP host",
+  "imapHostHint": "imap.example.com",
+  "port": "Port",
+  "security": "Security",
+  "sslTls": "SSL/TLS",
+  "startTls": "STARTTLS",
+  "plain": "Plain",
+  "authorizationCodeOrAppPassword": "Authorization code or app password",
+  "gmailImapAppPasswordHint": "Gmail IMAP does not accept your normal Google password. Enable 2-Step Verification and generate an app password, or use Gmail OAuth sign-in.",
+  "gmailImapAuthFailed": "Gmail IMAP sign-in failed. Confirm IMAP is enabled and use a Google app password instead of your web sign-in password.",
+  "required": "Required",
+  "enterValidPort": "Enter a valid port",
+  "launchAtStartup": "Launch desktop listener at startup",
+  "desktopListenerEnabledDescription": "Keeps checking mail while the desktop app is running.",
+  "desktopListenerUnavailableDescription": "Available on Windows and macOS desktop builds.",
+  "mobileReminders": "Mobile reminders",
+  "mobileReminderDescription": "Mobile builds sync and notify while the app is open or foregrounded.",
+  "language": "Language",
+  "languageSystem": "Chinese",
+  "languageChinese": "中文",
+  "languageEnglish": "English",
+  "syncingInboxes": "Syncing inboxes...",
+  "checkingNewMail": "Checking for new mail every few minutes",
+  "unknownSender": "Unknown sender",
+  "noSubject": "No subject"
+}
