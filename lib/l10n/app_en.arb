@@ -9,6 +9,7 @@
   "searchMail": "Search mail",
   "accounts": "Accounts",
   "allMailboxes": "All mailboxes",
+  "mailProvider": "Mail provider",
   "noAccounts": "No accounts",
   "addGmailOrImap": "Add Gmail or IMAP to start syncing.",
   "ready": "Ready",
@@ -25,8 +26,12 @@
     }
   },
   "selectMessage": "Select a message to read.",
+  "unread": "Unread",
+  "hasAttachments": "Attachments",
   "message": "Message",
   "attachment": "Attachment",
+  "cachedBody": "Cached body",
+  "attachmentNotice": "This version detects attachment presence. Attachment download will be added in a later version.",
   "from": "From: {value}",
   "@from": {
     "placeholders": {
@@ -73,6 +78,21 @@
   "delete": "Delete",
   "gmailImapAppPasswordHint": "Gmail IMAP does not accept your normal Google password. Enable 2-Step Verification and generate an app password, or use Gmail OAuth sign-in.",
   "gmailImapAuthFailed": "Gmail IMAP sign-in failed. Confirm IMAP is enabled and use a Google app password instead of your web sign-in password.",
+  "accountNotifications": "New mail notifications for this account",
+  "testConnection": "Test connection",
+  "connectionOk": "Connection test passed.",
+  "lastSync": "Last sync: {value}",
+  "@lastSync": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "accountError": "Error: {value}",
+  "@accountError": {
+    "placeholders": {
+      "value": {}
+    }
+  },
   "required": "Required",
   "enterValidPort": "Enter a valid port",
   "launchAtStartup": "Launch desktop listener at startup",
@@ -80,6 +100,10 @@
   "desktopListenerUnavailableDescription": "Available on Windows and macOS desktop builds.",
   "mobileReminders": "Mobile reminders",
   "mobileReminderDescription": "Mobile builds sync and notify while the app is open or foregrounded.",
+  "clearCache": "Clear local mail cache",
+  "clearCacheDescription": "Only local cached mail is removed. Messages on the mail server are not deleted.",
+  "localSecurity": "Local security",
+  "localSecurityDescription": "Credentials are stored in the system secure store. Database encryption and app lock will be added in a later version.",
   "language": "Language",
   "languageSystem": "Chinese",
   "languageChinese": "中文",

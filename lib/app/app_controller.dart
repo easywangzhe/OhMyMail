@@ -19,6 +19,8 @@ class AppController extends ChangeNotifier {
   Map<String, int> _messageCountsByAccount = const {};
   SyncStatus _syncStatus = const SyncStatus.idle();
   bool _githubOnly = false;
+  bool _unreadOnly = false;
+  bool _attachmentsOnly = false;
   String _query = '';
   String? _selectedAccountId;
   MailMessage? _selectedMessage;
@@ -34,6 +36,10 @@ class AppController extends ChangeNotifier {
 
   bool get githubOnly => _githubOnly;
 
+  bool get unreadOnly => _unreadOnly;
+
+  bool get attachmentsOnly => _attachmentsOnly;
+
   String get query => _query;
 
   String? get selectedAccountId => _selectedAccountId;
@@ -44,6 +50,11 @@ class AppController extends ChangeNotifier {
 
   int get unreadCount => _messages.where((message) => message.unread).length;
 
+  int get unreadOnlyCount => _messages.where((message) => message.unread).length;
+
+  int get attachmentCount =>
+      _messages.where((message) => message.hasAttachments).length;
+
   bool get hasDesktopNotifications {
     return _services.notifications.supportsBackgroundNotifications;
   }
@@ -53,7 +64,10 @@ class AppController extends ChangeNotifier {
     await _services.credentials.deleteForAccount('demo-gmail');
     _newMailSubscription = _services.mailSync.newMessages.listen((messages) {
       for (final message in messages) {
-        unawaited(_services.notifications.showNewMail(message));
+        final account = _accountFor(message.accountId);
+        if (account?.notificationsEnabled ?? true) {
+          unawaited(_services.notifications.showNewMail(message));
+        }
       }
       unawaited(refreshMessages());
     });
@@ -74,11 +88,15 @@ class AppController extends ChangeNotifier {
   Future<void> refreshMessages() async {
     _messages = await _services.database.loadMessages(
       githubOnly: _githubOnly,
+      unreadOnly: _unreadOnly,
+      attachmentsOnly: _attachmentsOnly,
       accountId: _selectedAccountId,
       query: _query,
     );
     final unfiltered = await _services.database.loadMessages(
       githubOnly: _githubOnly,
+      unreadOnly: _unreadOnly,
+      attachmentsOnly: _attachmentsOnly,
       query: _query,
     );
     _messageCountsByAccount = {
@@ -100,6 +118,16 @@ class AppController extends ChangeNotifier {
 
   Future<void> setGithubOnly(bool value) async {
     _githubOnly = value;
+    await refreshMessages();
+  }
+
+  Future<void> setUnreadOnly(bool value) async {
+    _unreadOnly = value;
+    await refreshMessages();
+  }
+
+  Future<void> setAttachmentsOnly(bool value) async {
+    _attachmentsOnly = value;
     await refreshMessages();
   }
 
@@ -144,7 +172,14 @@ class AppController extends ChangeNotifier {
     notifyListeners();
     try {
       for (final account in _accounts.where((item) => item.enabled)) {
-        await _services.mailSync.syncInbox(account);
+        try {
+          await _services.mailSync.syncInbox(account);
+        } on Object catch (error) {
+          await _services.database.updateAccountError(
+            account.id,
+            error.toString(),
+          );
+        }
       }
       await refreshAccounts();
       await refreshMessages();
@@ -194,6 +229,21 @@ class AppController extends ChangeNotifier {
     }
   }
 
+  Future<void> testAccount(MailAccount account) async {
+    try {
+      await _services.mailSync.testConnection(account);
+      await _services.database.updateLastSync(
+        account.id,
+        account.lastSyncAt ?? DateTime.now(),
+      );
+    } on Object catch (error) {
+      await _services.database.updateAccountError(account.id, error.toString());
+      rethrow;
+    } finally {
+      await refreshAccounts();
+    }
+  }
+
   Future<void> updateImapAccount({
     required MailAccount account,
     required String displayName,
@@ -201,6 +251,7 @@ class AppController extends ChangeNotifier {
     required int port,
     required MailSecurity security,
     required bool enabled,
+    required bool notificationsEnabled,
     String? username,
     String? password,
   }) async {
@@ -210,7 +261,10 @@ class AppController extends ChangeNotifier {
       imapPort: port,
       security: security,
       enabled: enabled,
+      notificationsEnabled: notificationsEnabled,
       username: username,
+      lastError: null,
+      lastErrorAt: null,
     );
     if (password != null && password.isNotEmpty) {
       await _services.credentials.savePassword(account.id, password);
@@ -233,6 +287,12 @@ class AppController extends ChangeNotifier {
     await refreshAccounts();
     await refreshMessages();
     await _services.mailSync.startListening(_accounts);
+  }
+
+  Future<void> clearLocalCache() async {
+    await _services.database.clearMessageCache();
+    _selectedMessage = null;
+    await refreshMessages();
   }
 
   Future<void> addGmailAccount({

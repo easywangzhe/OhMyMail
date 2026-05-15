@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../app/app_controller.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/mail_account.dart';
+import '../../services/mail/mail_provider_preset.dart';
 
 Future<void> showAddAccountSheet(
   BuildContext context, {
@@ -35,12 +36,15 @@ class _AddAccountSheetState extends State<AddAccountSheet> {
   final _port = TextEditingController(text: '993');
   final _password = TextEditingController();
   MailSecurity _security = MailSecurity.sslTls;
-  bool _isGmail = false;
+  MailProviderPreset _preset = mailProviderPresets.first;
   bool _enabled = true;
+  bool _notificationsEnabled = true;
   bool _submitting = false;
   String? _error;
 
   bool get _isEditing => widget.account != null;
+
+  bool get _isGmail => _preset.gmail || _host.text.trim() == 'imap.gmail.com';
 
   @override
   void initState() {
@@ -54,7 +58,11 @@ class _AddAccountSheetState extends State<AddAccountSheet> {
     _port.text = account.imapPort.toString();
     _security = account.security;
     _enabled = account.enabled;
-    _isGmail = account.imapHost == 'imap.gmail.com';
+    _notificationsEnabled = account.notificationsEnabled;
+    _preset = mailProviderPresets.firstWhere(
+      (preset) => preset.host == account.imapHost,
+      orElse: () => mailProviderPresets.last,
+    );
   }
 
   @override
@@ -89,28 +97,28 @@ class _AddAccountSheetState extends State<AddAccountSheet> {
             ),
             const SizedBox(height: 16),
             if (!_isEditing)
-              SegmentedButton<bool>(
-                segments: [
-                  ButtonSegment(
-                    value: false,
-                    icon: const Icon(Icons.mail_outline),
-                    label: Text(l10n.imap),
-                  ),
-                  ButtonSegment(
-                    value: true,
-                    icon: const Icon(Icons.alternate_email),
-                    label: Text(l10n.gmail),
-                  ),
+              DropdownButtonFormField<MailProviderPreset>(
+                initialValue: _preset,
+                decoration: InputDecoration(
+                  labelText: l10n.mailProvider,
+                  prefixIcon: const Icon(Icons.dns_outlined),
+                ),
+                items: [
+                  for (final preset in mailProviderPresets)
+                    DropdownMenuItem(
+                      value: preset,
+                      child: Text(preset.label),
+                    ),
                 ],
-                selected: {_isGmail},
-                onSelectionChanged: (value) {
+                onChanged: (value) {
+                  if (value == null) return;
                   setState(() {
-                    _isGmail = value.first;
-                    if (_isGmail) {
-                      _host.text = 'imap.gmail.com';
-                      _port.text = '993';
-                      _security = MailSecurity.sslTls;
+                    _preset = value;
+                    if (value.host.isNotEmpty) {
+                      _host.text = value.host;
                     }
+                    _port.text = value.port.toString();
+                    _security = value.security;
                   });
                 },
               ),
@@ -121,6 +129,15 @@ class _AddAccountSheetState extends State<AddAccountSheet> {
                 title: Text(l10n.enabled),
                 value: _enabled,
                 onChanged: (value) => setState(() => _enabled = value),
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                secondary: const Icon(Icons.notifications_active_outlined),
+                title: Text(l10n.accountNotifications),
+                value: _notificationsEnabled,
+                onChanged: (value) {
+                  setState(() => _notificationsEnabled = value);
+                },
               ),
             ],
             if (_isGmail) ...[
@@ -235,6 +252,14 @@ class _AddAccountSheetState extends State<AddAccountSheet> {
               ),
             ],
             const SizedBox(height: 20),
+            if (_isEditing) ...[
+              OutlinedButton.icon(
+                onPressed: _submitting ? null : _testConnection,
+                icon: const Icon(Icons.sensors),
+                label: Text(l10n.testConnection),
+              ),
+              const SizedBox(height: 8),
+            ],
             FilledButton.icon(
               onPressed: _submitting ? null : _submit,
               icon: _submitting
@@ -285,6 +310,7 @@ class _AddAccountSheetState extends State<AddAccountSheet> {
             port: 993,
             security: MailSecurity.sslTls,
             enabled: _enabled,
+            notificationsEnabled: _notificationsEnabled,
             password: _password.text.trim().isEmpty ? null : _password.text,
             username:
                 _username.text.trim().isEmpty ? null : _username.text.trim(),
@@ -310,6 +336,7 @@ class _AddAccountSheetState extends State<AddAccountSheet> {
             port: int.parse(_port.text.trim()),
             security: _security,
             enabled: _enabled,
+            notificationsEnabled: _notificationsEnabled,
             password: _password.text.trim().isEmpty ? null : _password.text,
             username:
                 _username.text.trim().isEmpty ? null : _username.text.trim(),
@@ -361,6 +388,24 @@ class _AddAccountSheetState extends State<AddAccountSheet> {
     try {
       await context.read<AppController>().deleteAccount(widget.account!);
       if (mounted) Navigator.of(context).pop();
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
+
+  Future<void> _testConnection() async {
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+    final l10n = AppLocalizations.of(context)!;
+    try {
+      await context.read<AppController>().testAccount(widget.account!);
+      if (mounted) {
+        setState(() => _error = l10n.connectionOk);
+      }
+    } on Object catch (error) {
+      if (mounted) setState(() => _error = error.toString());
     } finally {
       if (mounted) setState(() => _submitting = false);
     }

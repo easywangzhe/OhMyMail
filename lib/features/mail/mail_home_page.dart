@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../app/app_controller.dart';
 import '../../l10n/app_localizations.dart';
+import '../../models/mail_account.dart';
 import '../../models/mail_message.dart';
 import '../../models/sync_status.dart';
 import '../../shared/date_formatters.dart';
@@ -139,6 +140,25 @@ class _Sidebar extends StatelessWidget {
           selected: {controller.githubOnly},
           onSelectionChanged: (value) => controller.setGithubOnly(value.first),
         ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            FilterChip(
+              avatar: const Icon(Icons.mark_email_unread_outlined, size: 18),
+              label: Text(l10n.unread),
+              selected: controller.unreadOnly,
+              onSelected: controller.setUnreadOnly,
+            ),
+            FilterChip(
+              avatar: const Icon(Icons.attach_file, size: 18),
+              label: Text(l10n.hasAttachments),
+              selected: controller.attachmentsOnly,
+              onSelected: controller.setAttachmentsOnly,
+            ),
+          ],
+        ),
         const SizedBox(height: 16),
         SearchBar(
           hintText: l10n.searchMail,
@@ -174,7 +194,8 @@ class _Sidebar extends StatelessWidget {
                   : Icons.mail_outline,
             ),
             title: Text(account.displayName),
-            subtitle: Text(account.email),
+            subtitle: _AccountSubtitle(account: account),
+            isThreeLine: account.lastError != null,
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -192,6 +213,7 @@ class _Sidebar extends StatelessWidget {
                 ),
               ],
             ),
+            dense: false,
           ),
         if (controller.accounts.isEmpty)
           ListTile(
@@ -204,6 +226,34 @@ class _Sidebar extends StatelessWidget {
           const SizedBox(height: 20),
           _StatusBanner(status: status),
         ],
+      ],
+    );
+  }
+}
+
+class _AccountSubtitle extends StatelessWidget {
+  const _AccountSubtitle({required this.account});
+
+  final MailAccount account;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final error = account.lastError;
+    final lastSyncAt = account.lastSyncAt;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(account.email),
+        if (error != null && error.isNotEmpty)
+          Text(
+            l10n.accountError(error),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          )
+        else if (lastSyncAt != null)
+          Text(l10n.lastSync(formatMessageDate(lastSyncAt))),
       ],
     );
   }
@@ -464,6 +514,11 @@ class _MessageDetail extends StatelessWidget {
                 avatar: const Icon(Icons.attach_file, size: 18),
                 label: Text(AppLocalizations.of(context)!.attachment),
               ),
+            if (message.bodyCached)
+              Chip(
+                avatar: const Icon(Icons.offline_pin_outlined, size: 18),
+                label: Text(AppLocalizations.of(context)!.cachedBody),
+              ),
           ],
         ),
         const SizedBox(height: 12),
@@ -478,11 +533,43 @@ class _MessageDetail extends StatelessWidget {
         Text(AppLocalizations.of(context)!.to(message.to)),
         Text(AppLocalizations.of(context)!.date(formatMessageDate(message.date))),
         const Divider(height: 32),
+        if (message.hasAttachments) ...[
+          _InfoBanner(text: AppLocalizations.of(context)!.attachmentNotice),
+          const SizedBox(height: 16),
+        ],
         SelectableText(
           message.body ?? message.snippet,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(height: 1.5),
         ),
       ],
+    );
+  }
+}
+
+class _InfoBanner extends StatelessWidget {
+  const _InfoBanner({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(Icons.info_outline, color: colorScheme.primary, size: 20),
+            const SizedBox(width: 8),
+            Expanded(child: Text(text)),
+          ],
+        ),
+      ),
     );
   }
 }

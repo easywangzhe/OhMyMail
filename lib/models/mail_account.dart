@@ -15,6 +15,9 @@ class MailAccount {
     required this.imapPort,
     required this.security,
     required this.enabled,
+    this.notificationsEnabled = true,
+    this.lastError,
+    this.lastErrorAt,
     this.username,
     this.createdAt,
     this.lastSyncAt,
@@ -29,6 +32,9 @@ class MailAccount {
   final int imapPort;
   final MailSecurity security;
   final bool enabled;
+  final bool notificationsEnabled;
+  final String? lastError;
+  final DateTime? lastErrorAt;
   final String? username;
   final DateTime? createdAt;
   final DateTime? lastSyncAt;
@@ -45,6 +51,9 @@ class MailAccount {
     int? imapPort,
     MailSecurity? security,
     bool? enabled,
+    bool? notificationsEnabled,
+    String? lastError,
+    DateTime? lastErrorAt,
     String? username,
     DateTime? createdAt,
     DateTime? lastSyncAt,
@@ -59,6 +68,9 @@ class MailAccount {
       imapPort: imapPort ?? this.imapPort,
       security: security ?? this.security,
       enabled: enabled ?? this.enabled,
+      notificationsEnabled: notificationsEnabled ?? this.notificationsEnabled,
+      lastError: lastError,
+      lastErrorAt: lastErrorAt,
       username: username ?? this.username,
       createdAt: createdAt ?? this.createdAt,
       lastSyncAt: lastSyncAt ?? this.lastSyncAt,
@@ -76,6 +88,9 @@ class MailAccount {
       'imap_port': imapPort,
       'security': security.name,
       'enabled': enabled ? 1 : 0,
+      'notifications_enabled': notificationsEnabled ? 1 : 0,
+      'last_error': lastError,
+      'last_error_at': lastErrorAt?.toIso8601String(),
       'username': username,
       'created_at': createdAt?.toIso8601String(),
       'last_sync_at': lastSyncAt?.toIso8601String(),
@@ -93,6 +108,10 @@ class MailAccount {
       imapPort: map['imap_port']! as int,
       security: MailSecurity.values.byName(map['security']! as String),
       enabled: (map['enabled']! as int) == 1,
+      notificationsEnabled:
+          ((map['notifications_enabled'] as int?) ?? 1) == 1,
+      lastError: map['last_error'] as String?,
+      lastErrorAt: _parseDate(map['last_error_at']),
       username: map['username'] as String?,
       createdAt: _parseDate(map['created_at']),
       lastSyncAt: _parseDate(map['last_sync_at']),

@@ -74,6 +74,24 @@ class _SettingsSheetState extends State<SettingsSheet> {
             title: Text(l10n.mobileReminders),
             subtitle: Text(l10n.mobileReminderDescription),
           ),
+          const Divider(),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.cleaning_services_outlined),
+            title: Text(l10n.clearCache),
+            subtitle: Text(l10n.clearCacheDescription),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () async {
+              await controller.clearLocalCache();
+              if (context.mounted) Navigator.of(context).pop();
+            },
+          ),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.lock_outline),
+            title: Text(l10n.localSecurity),
+            subtitle: Text(l10n.localSecurityDescription),
+          ),
         ],
       ),
     );

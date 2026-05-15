@@ -152,6 +152,12 @@ abstract class AppLocalizations {
   /// **'所有邮箱'**
   String get allMailboxes;
 
+  /// No description provided for @mailProvider.
+  ///
+  /// In zh, this message translates to:
+  /// **'邮箱服务商'**
+  String get mailProvider;
+
   /// No description provided for @noAccounts.
   ///
   /// In zh, this message translates to:
@@ -188,6 +194,18 @@ abstract class AppLocalizations {
   /// **'选择一封邮件阅读。'**
   String get selectMessage;
 
+  /// No description provided for @unread.
+  ///
+  /// In zh, this message translates to:
+  /// **'未读'**
+  String get unread;
+
+  /// No description provided for @hasAttachments.
+  ///
+  /// In zh, this message translates to:
+  /// **'有附件'**
+  String get hasAttachments;
+
   /// No description provided for @message.
   ///
   /// In zh, this message translates to:
@@ -199,6 +217,18 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'附件'**
   String get attachment;
+
+  /// No description provided for @cachedBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'已缓存正文'**
+  String get cachedBody;
+
+  /// No description provided for @attachmentNotice.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前版本会识别附件状态，附件下载将在后续版本提供。'**
+  String get attachmentNotice;
 
   /// No description provided for @from.
   ///
@@ -386,6 +416,36 @@ abstract class AppLocalizations {
   /// **'Gmail IMAP 登录失败。请确认已开启 IMAP，并使用 Google 账号的应用专用密码，而不是网页登录密码。'**
   String get gmailImapAuthFailed;
 
+  /// No description provided for @accountNotifications.
+  ///
+  /// In zh, this message translates to:
+  /// **'该账号新邮件提醒'**
+  String get accountNotifications;
+
+  /// No description provided for @testConnection.
+  ///
+  /// In zh, this message translates to:
+  /// **'测试连接'**
+  String get testConnection;
+
+  /// No description provided for @connectionOk.
+  ///
+  /// In zh, this message translates to:
+  /// **'连接测试通过。'**
+  String get connectionOk;
+
+  /// No description provided for @lastSync.
+  ///
+  /// In zh, this message translates to:
+  /// **'上次同步：{value}'**
+  String lastSync(Object value);
+
+  /// No description provided for @accountError.
+  ///
+  /// In zh, this message translates to:
+  /// **'错误：{value}'**
+  String accountError(Object value);
+
   /// No description provided for @required.
   ///
   /// In zh, this message translates to:
@@ -427,6 +487,30 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'移动端在应用打开或前台运行时同步并提醒。'**
   String get mobileReminderDescription;
+
+  /// No description provided for @clearCache.
+  ///
+  /// In zh, this message translates to:
+  /// **'清除本地邮件缓存'**
+  String get clearCache;
+
+  /// No description provided for @clearCacheDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'只删除本地缓存，不会删除邮箱服务器上的邮件。'**
+  String get clearCacheDescription;
+
+  /// No description provided for @localSecurity.
+  ///
+  /// In zh, this message translates to:
+  /// **'本地安全'**
+  String get localSecurity;
+
+  /// No description provided for @localSecurityDescription.
+  ///
+  /// In zh, this message translates to:
+  /// **'凭据已存入系统安全存储；数据库加密和应用锁将在后续版本提供。'**
+  String get localSecurityDescription;
 
   /// No description provided for @language.
   ///

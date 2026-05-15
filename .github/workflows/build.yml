@@ -41,10 +41,15 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: flutter build apk --release
+      - run: flutter build appbundle --release
       - uses: actions/upload-artifact@v4
         with:
           name: oh-my-mail-android-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: oh-my-mail-android-aab
+          path: build/app/outputs/bundle/release/app-release.aab
 
   windows:
     name: Windows
@@ -58,10 +63,12 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: flutter build windows --release
+      - shell: pwsh
+        run: Compress-Archive -Path build/windows/x64/runner/Release/* -DestinationPath oh-my-mail-windows.zip
       - uses: actions/upload-artifact@v4
         with:
           name: oh-my-mail-windows
-          path: build/windows/x64/runner/Release/**
+          path: oh-my-mail-windows.zip
 
   macos:
     name: macOS
@@ -75,10 +82,11 @@ jobs:
           cache: true
       - run: flutter pub get
       - run: flutter build macos --release
+      - run: ditto -c -k --sequesterRsrc --keepParent build/macos/Build/Products/Release/oh_my_mail.app oh-my-mail-macos.zip
       - uses: actions/upload-artifact@v4
         with:
           name: oh-my-mail-macos
-          path: build/macos/Build/Products/Release/*.app
+          path: oh-my-mail-macos.zip
 
   ios:
     name: iOS unsigned app
@@ -96,3 +104,18 @@ jobs:
         with:
           name: oh-my-mail-ios-unsigned
           path: build/ios/iphoneos/Runner.app
+
+  release:
+    name: GitHub Release
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [android, windows, macos, ios]
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*

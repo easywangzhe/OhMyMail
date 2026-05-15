@@ -36,6 +36,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get allMailboxes => 'All mailboxes';
 
   @override
+  String get mailProvider => 'Mail provider';
+
+  @override
   String get noAccounts => 'No accounts';
 
   @override
@@ -58,10 +61,23 @@ class AppLocalizationsEn extends AppLocalizations {
   String get selectMessage => 'Select a message to read.';
 
   @override
+  String get unread => 'Unread';
+
+  @override
+  String get hasAttachments => 'Attachments';
+
+  @override
   String get message => 'Message';
 
   @override
   String get attachment => 'Attachment';
+
+  @override
+  String get cachedBody => 'Cached body';
+
+  @override
+  String get attachmentNotice =>
+      'This version detects attachment presence. Attachment download will be added in a later version.';
 
   @override
   String from(Object value) {
@@ -168,6 +184,25 @@ class AppLocalizationsEn extends AppLocalizations {
       'Gmail IMAP sign-in failed. Confirm IMAP is enabled and use a Google app password instead of your web sign-in password.';
 
   @override
+  String get accountNotifications => 'New mail notifications for this account';
+
+  @override
+  String get testConnection => 'Test connection';
+
+  @override
+  String get connectionOk => 'Connection test passed.';
+
+  @override
+  String lastSync(Object value) {
+    return 'Last sync: $value';
+  }
+
+  @override
+  String accountError(Object value) {
+    return 'Error: $value';
+  }
+
+  @override
   String get required => 'Required';
 
   @override
@@ -190,6 +225,20 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get mobileReminderDescription =>
       'Mobile builds sync and notify while the app is open or foregrounded.';
+
+  @override
+  String get clearCache => 'Clear local mail cache';
+
+  @override
+  String get clearCacheDescription =>
+      'Only local cached mail is removed. Messages on the mail server are not deleted.';
+
+  @override
+  String get localSecurity => 'Local security';
+
+  @override
+  String get localSecurityDescription =>
+      'Credentials are stored in the system secure store. Database encryption and app lock will be added in a later version.';
 
   @override
   String get language => 'Language';

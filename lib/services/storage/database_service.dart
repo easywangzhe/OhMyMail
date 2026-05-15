@@ -23,7 +23,7 @@ class DatabaseService {
     final dbPath = p.join(documents.path, 'oh_my_mail.db');
     final db = await openDatabase(
       dbPath,
-      version: 1,
+      version: 2,
       onCreate: (database, version) async {
         await database.execute('''
           CREATE TABLE accounts (
@@ -36,6 +36,9 @@ class DatabaseService {
             imap_port INTEGER NOT NULL,
             security TEXT NOT NULL,
             enabled INTEGER NOT NULL,
+            notifications_enabled INTEGER NOT NULL DEFAULT 1,
+            last_error TEXT,
+            last_error_at TEXT,
             username TEXT,
             created_at TEXT,
             last_sync_at TEXT
@@ -69,8 +72,43 @@ class DatabaseService {
           'CREATE INDEX idx_messages_account ON messages(account_id, folder)',
         );
       },
+      onUpgrade: (database, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await _addColumnIfMissing(
+            database,
+            'accounts',
+            'notifications_enabled',
+            'INTEGER NOT NULL DEFAULT 1',
+          );
+          await _addColumnIfMissing(
+            database,
+            'accounts',
+            'last_error',
+            'TEXT',
+          );
+          await _addColumnIfMissing(
+            database,
+            'accounts',
+            'last_error_at',
+            'TEXT',
+          );
+        }
+      },
     );
     return DatabaseService._(db);
+  }
+
+  static Future<void> _addColumnIfMissing(
+    Database database,
+    String table,
+    String column,
+    String definition,
+  ) async {
+    final columns = await database.rawQuery('PRAGMA table_info($table)');
+    final exists = columns.any((row) => row['name'] == column);
+    if (!exists) {
+      await database.execute('ALTER TABLE $table ADD COLUMN $column $definition');
+    }
   }
 
   Future<List<MailAccount>> loadAccounts() async {
@@ -104,7 +142,23 @@ class DatabaseService {
   Future<void> updateLastSync(String accountId, DateTime at) async {
     await _db.update(
       'accounts',
-      {'last_sync_at': at.toIso8601String()},
+      {
+        'last_sync_at': at.toIso8601String(),
+        'last_error': null,
+        'last_error_at': null,
+      },
+      where: 'id = ?',
+      whereArgs: [accountId],
+    );
+  }
+
+  Future<void> updateAccountError(String accountId, String error) async {
+    await _db.update(
+      'accounts',
+      {
+        'last_error': error,
+        'last_error_at': DateTime.now().toIso8601String(),
+      },
       where: 'id = ?',
       whereArgs: [accountId],
     );
@@ -112,6 +166,8 @@ class DatabaseService {
 
   Future<List<MailMessage>> loadMessages({
     bool githubOnly = false,
+    bool unreadOnly = false,
+    bool attachmentsOnly = false,
     String? accountId,
     String query = '',
   }) async {
@@ -120,6 +176,12 @@ class DatabaseService {
     if (accountId != null) {
       where.add('account_id = ?');
       args.add(accountId);
+    }
+    if (unreadOnly) {
+      where.add('unread = 1');
+    }
+    if (attachmentsOnly) {
+      where.add('has_attachments = 1');
     }
     if (query.trim().isNotEmpty) {
       where.add('(subject LIKE ? OR from_address LIKE ? OR snippet LIKE ?)');
@@ -182,6 +244,10 @@ class DatabaseService {
       where: 'id = ?',
       whereArgs: [id],
     );
+  }
+
+  Future<void> clearMessageCache() async {
+    await _db.delete('messages');
   }
 
   Future<int> unreadCount() async {

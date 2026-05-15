@@ -36,6 +36,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get allMailboxes => '所有邮箱';
 
   @override
+  String get mailProvider => '邮箱服务商';
+
+  @override
   String get noAccounts => '还没有账号';
 
   @override
@@ -58,10 +61,22 @@ class AppLocalizationsZh extends AppLocalizations {
   String get selectMessage => '选择一封邮件阅读。';
 
   @override
+  String get unread => '未读';
+
+  @override
+  String get hasAttachments => '有附件';
+
+  @override
   String get message => '邮件';
 
   @override
   String get attachment => '附件';
+
+  @override
+  String get cachedBody => '已缓存正文';
+
+  @override
+  String get attachmentNotice => '当前版本会识别附件状态，附件下载将在后续版本提供。';
 
   @override
   String from(Object value) {
@@ -165,6 +180,25 @@ class AppLocalizationsZh extends AppLocalizations {
       'Gmail IMAP 登录失败。请确认已开启 IMAP，并使用 Google 账号的应用专用密码，而不是网页登录密码。';
 
   @override
+  String get accountNotifications => '该账号新邮件提醒';
+
+  @override
+  String get testConnection => '测试连接';
+
+  @override
+  String get connectionOk => '连接测试通过。';
+
+  @override
+  String lastSync(Object value) {
+    return '上次同步：$value';
+  }
+
+  @override
+  String accountError(Object value) {
+    return '错误：$value';
+  }
+
+  @override
   String get required => '必填';
 
   @override
@@ -185,6 +219,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get mobileReminderDescription => '移动端在应用打开或前台运行时同步并提醒。';
+
+  @override
+  String get clearCache => '清除本地邮件缓存';
+
+  @override
+  String get clearCacheDescription => '只删除本地缓存，不会删除邮箱服务器上的邮件。';
+
+  @override
+  String get localSecurity => '本地安全';
+
+  @override
+  String get localSecurityDescription => '凭据已存入系统安全存储；数据库加密和应用锁将在后续版本提供。';
 
   @override
   String get language => '语言';

@@ -9,6 +9,7 @@
   "searchMail": "搜索邮件",
   "accounts": "账号",
   "allMailboxes": "所有邮箱",
+  "mailProvider": "邮箱服务商",
   "noAccounts": "还没有账号",
   "addGmailOrImap": "添加 Gmail 或 IMAP 后开始同步。",
   "ready": "就绪",
@@ -25,8 +26,12 @@
     }
   },
   "selectMessage": "选择一封邮件阅读。",
+  "unread": "未读",
+  "hasAttachments": "有附件",
   "message": "邮件",
   "attachment": "附件",
+  "cachedBody": "已缓存正文",
+  "attachmentNotice": "当前版本会识别附件状态，附件下载将在后续版本提供。",
   "from": "发件人：{value}",
   "@from": {
     "placeholders": {
@@ -73,6 +78,21 @@
   "delete": "删除",
   "gmailImapAppPasswordHint": "Gmail 使用 IMAP 时不能填写谷歌账号登录密码。请在 Google 账号开启两步验证后生成“应用专用密码”，或使用 Gmail OAuth 登录。",
   "gmailImapAuthFailed": "Gmail IMAP 登录失败。请确认已开启 IMAP，并使用 Google 账号的应用专用密码，而不是网页登录密码。",
+  "accountNotifications": "该账号新邮件提醒",
+  "testConnection": "测试连接",
+  "connectionOk": "连接测试通过。",
+  "lastSync": "上次同步：{value}",
+  "@lastSync": {
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "accountError": "错误：{value}",
+  "@accountError": {
+    "placeholders": {
+      "value": {}
+    }
+  },
   "required": "必填",
   "enterValidPort": "请输入有效端口",
   "launchAtStartup": "桌面端开机自动监听",
@@ -80,6 +100,10 @@
   "desktopListenerUnavailableDescription": "仅 Windows 和 macOS 桌面版本可用。",
   "mobileReminders": "移动端提醒",
   "mobileReminderDescription": "移动端在应用打开或前台运行时同步并提醒。",
+  "clearCache": "清除本地邮件缓存",
+  "clearCacheDescription": "只删除本地缓存，不会删除邮箱服务器上的邮件。",
+  "localSecurity": "本地安全",
+  "localSecurityDescription": "凭据已存入系统安全存储；数据库加密和应用锁将在后续版本提供。",
   "language": "语言",
   "languageSystem": "中文",
   "languageChinese": "中文",
