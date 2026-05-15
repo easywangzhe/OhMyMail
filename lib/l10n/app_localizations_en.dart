@@ -88,6 +88,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get addMailbox => 'Add mailbox';
 
   @override
+  String get editMailbox => 'Edit mailbox';
+
+  @override
   String get imap => 'IMAP';
 
   @override
@@ -129,6 +132,32 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get authorizationCodeOrAppPassword =>
       'Authorization code or app password';
+
+  @override
+  String get leavePasswordBlankToKeep =>
+      'Leave blank to keep the current authorization code or app password';
+
+  @override
+  String get enabled => 'Enable account';
+
+  @override
+  String get saveChanges => 'Save changes';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountConfirmTitle => 'Delete account?';
+
+  @override
+  String get deleteAccountConfirmBody =>
+      'This removes the account and locally cached mail. Messages on the mail server are not deleted.';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get delete => 'Delete';
 
   @override
   String get gmailImapAppPasswordHint =>

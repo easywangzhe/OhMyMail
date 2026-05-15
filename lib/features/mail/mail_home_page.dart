@@ -175,9 +175,22 @@ class _Sidebar extends StatelessWidget {
             ),
             title: Text(account.displayName),
             subtitle: Text(account.email),
-            trailing: _AccountCountBadge(
-              count: controller.messageCountsByAccount[account.id] ?? 0,
-              enabled: account.enabled,
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _AccountCountBadge(
+                  count: controller.messageCountsByAccount[account.id] ?? 0,
+                  enabled: account.enabled,
+                ),
+                IconButton(
+                  tooltip: AppLocalizations.of(context)!.editMailbox,
+                  onPressed: () => showAddAccountSheet(
+                    context,
+                    account: account,
+                  ),
+                  icon: const Icon(Icons.edit_outlined),
+                ),
+              ],
             ),
           ),
         if (controller.accounts.isEmpty)

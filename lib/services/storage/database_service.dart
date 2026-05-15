@@ -86,6 +86,21 @@ class DatabaseService {
     );
   }
 
+  Future<void> deleteAccount(String accountId) async {
+    await _db.transaction((transaction) async {
+      await transaction.delete(
+        'messages',
+        where: 'account_id = ?',
+        whereArgs: [accountId],
+      );
+      await transaction.delete(
+        'accounts',
+        where: 'id = ?',
+        whereArgs: [accountId],
+      );
+    });
+  }
+
   Future<void> updateLastSync(String accountId, DateTime at) async {
     await _db.update(
       'accounts',

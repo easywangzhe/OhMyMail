@@ -5,17 +5,22 @@ import '../../app/app_controller.dart';
 import '../../l10n/app_localizations.dart';
 import '../../models/mail_account.dart';
 
-Future<void> showAddAccountSheet(BuildContext context) {
+Future<void> showAddAccountSheet(
+  BuildContext context, {
+  MailAccount? account,
+}) {
   return showModalBottomSheet<void>(
     context: context,
     isScrollControlled: true,
     useSafeArea: true,
-    builder: (_) => const AddAccountSheet(),
+    builder: (_) => AddAccountSheet(account: account),
   );
 }
 
 class AddAccountSheet extends StatefulWidget {
-  const AddAccountSheet({super.key});
+  const AddAccountSheet({super.key, this.account});
+
+  final MailAccount? account;
 
   @override
   State<AddAccountSheet> createState() => _AddAccountSheetState();
@@ -31,8 +36,26 @@ class _AddAccountSheetState extends State<AddAccountSheet> {
   final _password = TextEditingController();
   MailSecurity _security = MailSecurity.sslTls;
   bool _isGmail = false;
+  bool _enabled = true;
   bool _submitting = false;
   String? _error;
+
+  bool get _isEditing => widget.account != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final account = widget.account;
+    if (account == null) return;
+    _email.text = account.email;
+    _displayName.text = account.displayName;
+    _username.text = account.username ?? '';
+    _host.text = account.imapHost;
+    _port.text = account.imapPort.toString();
+    _security = account.security;
+    _enabled = account.enabled;
+    _isGmail = account.imapHost == 'imap.gmail.com';
+  }
 
   @override
   void dispose() {
@@ -61,35 +84,45 @@ class _AddAccountSheetState extends State<AddAccountSheet> {
           shrinkWrap: true,
           children: [
             Text(
-              l10n.addMailbox,
+              _isEditing ? l10n.editMailbox : l10n.addMailbox,
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 16),
-            SegmentedButton<bool>(
-              segments: [
-                ButtonSegment(
-                  value: false,
-                  icon: const Icon(Icons.mail_outline),
-                  label: Text(l10n.imap),
-                ),
-                ButtonSegment(
-                  value: true,
-                  icon: const Icon(Icons.alternate_email),
-                  label: Text(l10n.gmail),
-                ),
-              ],
-              selected: {_isGmail},
-              onSelectionChanged: (value) {
-                setState(() {
-                  _isGmail = value.first;
-                  if (_isGmail) {
-                    _host.text = 'imap.gmail.com';
-                    _port.text = '993';
-                    _security = MailSecurity.sslTls;
-                  }
-                });
-              },
-            ),
+            if (!_isEditing)
+              SegmentedButton<bool>(
+                segments: [
+                  ButtonSegment(
+                    value: false,
+                    icon: const Icon(Icons.mail_outline),
+                    label: Text(l10n.imap),
+                  ),
+                  ButtonSegment(
+                    value: true,
+                    icon: const Icon(Icons.alternate_email),
+                    label: Text(l10n.gmail),
+                  ),
+                ],
+                selected: {_isGmail},
+                onSelectionChanged: (value) {
+                  setState(() {
+                    _isGmail = value.first;
+                    if (_isGmail) {
+                      _host.text = 'imap.gmail.com';
+                      _port.text = '993';
+                      _security = MailSecurity.sslTls;
+                    }
+                  });
+                },
+              ),
+            if (_isEditing) ...[
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                secondary: const Icon(Icons.power_settings_new),
+                title: Text(l10n.enabled),
+                value: _enabled,
+                onChanged: (value) => setState(() => _enabled = value),
+              ),
+            ],
             if (_isGmail) ...[
               const SizedBox(height: 12),
               _InfoBanner(text: l10n.gmailImapAppPasswordHint),
@@ -101,6 +134,7 @@ class _AddAccountSheetState extends State<AddAccountSheet> {
                 labelText: l10n.emailAddress,
                 prefixIcon: const Icon(Icons.email_outlined),
               ),
+              enabled: !_isEditing,
               keyboardType: TextInputType.emailAddress,
               validator: _required,
             ),
@@ -187,10 +221,11 @@ class _AddAccountSheetState extends State<AddAccountSheet> {
               controller: _password,
               decoration: InputDecoration(
                 labelText: l10n.authorizationCodeOrAppPassword,
+                helperText: _isEditing ? l10n.leavePasswordBlankToKeep : null,
                 prefixIcon: const Icon(Icons.key_outlined),
               ),
               obscureText: true,
-              validator: _required,
+              validator: _isEditing ? null : _required,
             ),
             if (_error != null) ...[
               const SizedBox(height: 12),
@@ -207,9 +242,17 @@ class _AddAccountSheetState extends State<AddAccountSheet> {
                       dimension: 18,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Icon(Icons.add),
-              label: Text(l10n.addAccount),
+                  : Icon(_isEditing ? Icons.save_outlined : Icons.add),
+              label: Text(_isEditing ? l10n.saveChanges : l10n.addAccount),
             ),
+            if (_isEditing) ...[
+              const SizedBox(height: 8),
+              OutlinedButton.icon(
+                onPressed: _submitting ? null : _delete,
+                icon: const Icon(Icons.delete_outline),
+                label: Text(l10n.deleteAccount),
+              ),
+            ],
           ],
         ),
       ),
@@ -234,35 +277,90 @@ class _AddAccountSheetState extends State<AddAccountSheet> {
         AppLocalizations.of(context)!.gmailImapAuthFailed;
     try {
       if (_isGmail) {
-        await controller.addImapAccount(
-          email: _email.text.trim(),
-          displayName: _displayName.text.trim(),
-          host: 'imap.gmail.com',
-          port: 993,
-          security: MailSecurity.sslTls,
-          password: _password.text,
-          username: _username.text.trim().isEmpty
-              ? null
-              : _username.text.trim(),
-        );
+        if (_isEditing) {
+          await controller.updateImapAccount(
+            account: widget.account!,
+            displayName: _displayName.text.trim(),
+            host: 'imap.gmail.com',
+            port: 993,
+            security: MailSecurity.sslTls,
+            enabled: _enabled,
+            password: _password.text.trim().isEmpty ? null : _password.text,
+            username:
+                _username.text.trim().isEmpty ? null : _username.text.trim(),
+          );
+        } else {
+          await controller.addImapAccount(
+            email: _email.text.trim(),
+            displayName: _displayName.text.trim(),
+            host: 'imap.gmail.com',
+            port: 993,
+            security: MailSecurity.sslTls,
+            password: _password.text,
+            username:
+                _username.text.trim().isEmpty ? null : _username.text.trim(),
+          );
+        }
       } else {
-        await controller.addImapAccount(
-          email: _email.text.trim(),
-          displayName: _displayName.text.trim(),
-          host: _host.text.trim(),
-          port: int.parse(_port.text.trim()),
-          security: _security,
-          password: _password.text,
-          username: _username.text.trim().isEmpty
-              ? null
-              : _username.text.trim(),
-        );
+        if (_isEditing) {
+          await controller.updateImapAccount(
+            account: widget.account!,
+            displayName: _displayName.text.trim(),
+            host: _host.text.trim(),
+            port: int.parse(_port.text.trim()),
+            security: _security,
+            enabled: _enabled,
+            password: _password.text.trim().isEmpty ? null : _password.text,
+            username:
+                _username.text.trim().isEmpty ? null : _username.text.trim(),
+          );
+        } else {
+          await controller.addImapAccount(
+            email: _email.text.trim(),
+            displayName: _displayName.text.trim(),
+            host: _host.text.trim(),
+            port: int.parse(_port.text.trim()),
+            security: _security,
+            password: _password.text,
+            username:
+                _username.text.trim().isEmpty ? null : _username.text.trim(),
+          );
+        }
       }
       if (mounted) Navigator.of(context).pop();
     } on Object catch (error) {
       setState(() {
         _error = _isGmail ? gmailImapAuthFailed : error.toString();
       });
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
+
+  Future<void> _delete() async {
+    final l10n = AppLocalizations.of(context)!;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.deleteAccountConfirmTitle),
+        content: Text(l10n.deleteAccountConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.delete),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    setState(() => _submitting = true);
+    try {
+      await context.read<AppController>().deleteAccount(widget.account!);
+      if (mounted) Navigator.of(context).pop();
     } finally {
       if (mounted) setState(() => _submitting = false);
     }

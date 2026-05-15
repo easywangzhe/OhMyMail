@@ -236,6 +236,12 @@ abstract class AppLocalizations {
   /// **'添加邮箱'**
   String get addMailbox;
 
+  /// No description provided for @editMailbox.
+  ///
+  /// In zh, this message translates to:
+  /// **'编辑邮箱'**
+  String get editMailbox;
+
   /// No description provided for @imap.
   ///
   /// In zh, this message translates to:
@@ -319,6 +325,54 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'授权码或应用专用密码'**
   String get authorizationCodeOrAppPassword;
+
+  /// No description provided for @leavePasswordBlankToKeep.
+  ///
+  /// In zh, this message translates to:
+  /// **'留空则保留当前授权码或应用专用密码'**
+  String get leavePasswordBlankToKeep;
+
+  /// No description provided for @enabled.
+  ///
+  /// In zh, this message translates to:
+  /// **'启用账号'**
+  String get enabled;
+
+  /// No description provided for @saveChanges.
+  ///
+  /// In zh, this message translates to:
+  /// **'保存修改'**
+  String get saveChanges;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除账号'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountConfirmTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除账号？'**
+  String get deleteAccountConfirmTitle;
+
+  /// No description provided for @deleteAccountConfirmBody.
+  ///
+  /// In zh, this message translates to:
+  /// **'将删除该账号及本地缓存的邮件，邮箱服务器上的邮件不会被删除。'**
+  String get deleteAccountConfirmBody;
+
+  /// No description provided for @cancel.
+  ///
+  /// In zh, this message translates to:
+  /// **'取消'**
+  String get cancel;
+
+  /// No description provided for @delete.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除'**
+  String get delete;
 
   /// No description provided for @gmailImapAppPasswordHint.
   ///

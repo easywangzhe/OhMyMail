@@ -88,6 +88,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get addMailbox => '添加邮箱';
 
   @override
+  String get editMailbox => '编辑邮箱';
+
+  @override
   String get imap => 'IMAP';
 
   @override
@@ -128,6 +131,30 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get authorizationCodeOrAppPassword => '授权码或应用专用密码';
+
+  @override
+  String get leavePasswordBlankToKeep => '留空则保留当前授权码或应用专用密码';
+
+  @override
+  String get enabled => '启用账号';
+
+  @override
+  String get saveChanges => '保存修改';
+
+  @override
+  String get deleteAccount => '删除账号';
+
+  @override
+  String get deleteAccountConfirmTitle => '删除账号？';
+
+  @override
+  String get deleteAccountConfirmBody => '将删除该账号及本地缓存的邮件，邮箱服务器上的邮件不会被删除。';
+
+  @override
+  String get cancel => '取消';
+
+  @override
+  String get delete => '删除';
 
   @override
   String get gmailImapAppPasswordHint =>

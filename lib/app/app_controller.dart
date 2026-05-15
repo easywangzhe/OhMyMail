@@ -194,6 +194,47 @@ class AppController extends ChangeNotifier {
     }
   }
 
+  Future<void> updateImapAccount({
+    required MailAccount account,
+    required String displayName,
+    required String host,
+    required int port,
+    required MailSecurity security,
+    required bool enabled,
+    String? username,
+    String? password,
+  }) async {
+    final updated = account.copyWith(
+      displayName: displayName,
+      imapHost: host,
+      imapPort: port,
+      security: security,
+      enabled: enabled,
+      username: username,
+    );
+    if (password != null && password.isNotEmpty) {
+      await _services.credentials.savePassword(account.id, password);
+    }
+    if (enabled) {
+      await _services.mailSync.testConnection(updated);
+    }
+    await _services.database.upsertAccount(updated);
+    await refreshAccounts();
+    await refreshMessages();
+    await _services.mailSync.startListening(_accounts);
+  }
+
+  Future<void> deleteAccount(MailAccount account) async {
+    await _services.database.deleteAccount(account.id);
+    await _services.credentials.deleteForAccount(account.id);
+    if (_selectedAccountId == account.id) {
+      _selectedAccountId = null;
+    }
+    await refreshAccounts();
+    await refreshMessages();
+    await _services.mailSync.startListening(_accounts);
+  }
+
   Future<void> addGmailAccount({
     required String email,
     required String displayName,
