@@ -15,6 +15,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get syncNow => 'Sync now';
 
   @override
+  String get syncAll => 'Sync all mailboxes';
+
+  @override
+  String get syncSelectedMailbox => 'Sync selected mailbox';
+
+  @override
+  String get syncThisMailbox => 'Sync this mailbox';
+
+  @override
   String get addAccount => 'Add account';
 
   @override

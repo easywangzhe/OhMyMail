@@ -15,6 +15,15 @@ class AppLocalizationsZh extends AppLocalizations {
   String get syncNow => '立即同步';
 
   @override
+  String get syncAll => '同步全部邮箱';
+
+  @override
+  String get syncSelectedMailbox => '同步当前邮箱';
+
+  @override
+  String get syncThisMailbox => '同步此邮箱';
+
+  @override
   String get addAccount => '添加账号';
 
   @override

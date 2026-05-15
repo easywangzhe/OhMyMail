@@ -110,6 +110,24 @@ abstract class AppLocalizations {
   /// **'立即同步'**
   String get syncNow;
 
+  /// No description provided for @syncAll.
+  ///
+  /// In zh, this message translates to:
+  /// **'同步全部邮箱'**
+  String get syncAll;
+
+  /// No description provided for @syncSelectedMailbox.
+  ///
+  /// In zh, this message translates to:
+  /// **'同步当前邮箱'**
+  String get syncSelectedMailbox;
+
+  /// No description provided for @syncThisMailbox.
+  ///
+  /// In zh, this message translates to:
+  /// **'同步此邮箱'**
+  String get syncThisMailbox;
+
   /// No description provided for @addAccount.
   ///
   /// In zh, this message translates to:

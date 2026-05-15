@@ -164,6 +164,14 @@ class AppController extends ChangeNotifier {
   }
 
   Future<void> syncNow() async {
+    final selectedAccount = _selectedAccountId == null
+        ? null
+        : _accountFor(_selectedAccountId!);
+    if (selectedAccount != null) {
+      await syncAccount(selectedAccount);
+      return;
+    }
+
     _syncStatus = SyncStatus(
       phase: SyncPhase.syncing,
       message: null,
@@ -196,6 +204,41 @@ class AppController extends ChangeNotifier {
       );
     }
     notifyListeners();
+  }
+
+  Future<void> syncAccount(MailAccount account) async {
+    _syncStatus = SyncStatus(
+      phase: SyncPhase.syncing,
+      message: null,
+      accountId: account.id,
+      updatedAt: DateTime.now(),
+    );
+    notifyListeners();
+    try {
+      if (!account.enabled) {
+        return;
+      }
+      await _services.mailSync.syncInbox(account);
+      await refreshAccounts();
+      await refreshMessages();
+      _syncStatus = SyncStatus(
+        phase: SyncPhase.polling,
+        message: null,
+        accountId: account.id,
+        updatedAt: DateTime.now(),
+      );
+    } on Object catch (error) {
+      await _services.database.updateAccountError(account.id, error.toString());
+      _syncStatus = SyncStatus(
+        phase: SyncPhase.error,
+        message: error.toString(),
+        accountId: account.id,
+        updatedAt: DateTime.now(),
+      );
+      await refreshAccounts();
+    } finally {
+      notifyListeners();
+    }
   }
 
   Future<void> addImapAccount({

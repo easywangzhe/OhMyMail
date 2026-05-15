@@ -23,7 +23,9 @@ class MailHomePage extends StatelessWidget {
         centerTitle: false,
         actions: [
           IconButton(
-            tooltip: l10n.syncNow,
+            tooltip: controller.selectedAccountId == null
+                ? l10n.syncAll
+                : l10n.syncSelectedMailbox,
             onPressed: controller.syncStatus.phase == SyncPhase.syncing
                 ? null
                 : () => controller.syncNow(),
@@ -202,6 +204,14 @@ class _Sidebar extends StatelessWidget {
                 _AccountCountBadge(
                   count: controller.messageCountsByAccount[account.id] ?? 0,
                   enabled: account.enabled,
+                ),
+                IconButton(
+                  tooltip: AppLocalizations.of(context)!.syncThisMailbox,
+                  onPressed: account.enabled &&
+                          controller.syncStatus.phase != SyncPhase.syncing
+                      ? () => controller.syncAccount(account)
+                      : null,
+                  icon: const Icon(Icons.sync),
                 ),
                 IconButton(
                   tooltip: AppLocalizations.of(context)!.editMailbox,
